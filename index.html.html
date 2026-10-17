@@ -1,0 +1,547 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Job - English Activity</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --lime: #b8e85b;
+    --lime-dark: #76a82c;
+    --cream: #fffdf0;
+    --green: #365b36;
+    --pink: #f7b9d2;
+}
+
+body {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    background: var(--lime);
+    color: var(--green);
+    min-height: 100vh;
+}
+
+.screen {
+    display: none;
+    min-height: 100vh;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.screen.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+button {
+    border: none;
+    border-radius: 25px;
+    padding: 13px 24px;
+    background: var(--green);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform .2s, background .2s;
+    margin: 8px;
+}
+
+button:hover {
+    transform: scale(1.04);
+    background: var(--lime-dark);
+}
+
+button:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+}
+
+.flower {
+    position: absolute;
+    font-size: 32px;
+    pointer-events: none;
+    opacity: .9;
+}
+
+.f1 { top: 5%; left: 6%; }
+.f2 { top: 12%; right: 8%; }
+.f3 { bottom: 8%; left: 9%; }
+.f4 { bottom: 6%; right: 7%; }
+.f5 { top: 45%; left: 3%; }
+.f6 { top: 48%; right: 3%; }
+
+.home-card {
+    text-align: center;
+    background: var(--cream);
+    border: 3px solid #8fbe45;
+    border-radius: 30px;
+    padding: 35px 25px;
+    width: min(500px, 94%);
+    box-shadow: 0 12px 30px #648b3540;
+    z-index: 1;
+}
+
+.home-card h1 {
+    font-size: clamp(32px, 7vw, 48px);
+    margin: 8px 0;
+}
+
+.subtitle {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.envelope {
+    width: 170px;
+    height: 112px;
+    background: var(--lime);
+    border: 3px solid var(--lime-dark);
+    border-radius: 8px;
+    position: relative;
+    margin: 25px auto;
+    box-shadow: 0 7px 0 #d7eaa6;
+}
+
+.envelope::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: #c9ed85;
+    clip-path: polygon(0 0, 50% 58%, 100% 0);
+    border-radius: 5px;
+}
+
+.envelope::after {
+    content: "✿";
+    position: absolute;
+    color: #ee91b7;
+    font-size: 30px;
+    left: 69px;
+    top: 42px;
+}
+
+.letter-screen {
+    background:
+        radial-gradient(circle at 10% 10%, #f5c5d8 0 5px, transparent 6px),
+        radial-gradient(circle at 90% 90%, #b9dc79 0 6px, transparent 7px),
+        var(--cream);
+}
+
+.letter-paper {
+    width: min(850px, 100%);
+    background: #fffef8;
+    border: 2px solid #b3d66c;
+    border-radius: 20px;
+    padding: clamp(22px, 5vw, 45px);
+    box-shadow: 0 10px 28px #597a3520;
+    position: relative;
+    z-index: 1;
+}
+
+.letter-paper h1 {
+    text-align: center;
+    font-size: clamp(30px, 6vw, 42px);
+    margin: 5px 0 22px;
+    color: #618a32;
+}
+
+.letter-paper p {
+    font-size: clamp(16px, 2.5vw, 19px);
+    line-height: 1.8;
+    margin: 8px 0;
+}
+
+.letter-heading {
+    border-bottom: 2px dashed #b8d77c;
+    padding-bottom: 15px;
+    margin-bottom: 18px;
+}
+
+.decorative-title {
+    text-align: center;
+    color: #668e36;
+    margin-bottom: 8px;
+}
+
+.quiz-card {
+    width: min(700px, 100%);
+    background: var(--cream);
+    border: 3px solid #9acb4e;
+    border-radius: 25px;
+    padding: clamp(20px, 4vw, 35px);
+    box-shadow: 0 10px 25px #597a3520;
+    position: relative;
+    z-index: 1;
+}
+
+.quiz-card h1 {
+    text-align: center;
+}
+
+.progress {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.question {
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1.5;
+}
+
+.answers {
+    display: grid;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.answer {
+    background: white;
+    color: var(--green);
+    border: 2px solid #c5dc9a;
+    border-radius: 14px;
+    padding: 13px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: normal;
+    margin: 0;
+}
+
+.answer:hover {
+    background: #f0f8df;
+    color: var(--green);
+}
+
+.answer.correct {
+    background: #d8f4bb;
+    border-color: #5b9b36;
+}
+
+.answer.wrong {
+    background: #ffe0e6;
+    border-color: #d86c86;
+}
+
+.feedback {
+    min-height: 28px;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.quiz-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.result {
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.7;
+}
+
+@media (max-width: 500px) {
+    .screen {
+        padding: 15px;
+    }
+
+    .flower {
+        font-size: 24px;
+    }
+
+    .letter-paper p {
+        line-height: 1.65;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HOME -->
+<section id="home" class="screen active">
+    <span class="flower f1">🌸</span>
+    <span class="flower f2">🌿</span>
+    <span class="flower f3">🌼</span>
+    <span class="flower f4">🌷</span>
+    <span class="flower f5">🍃</span>
+    <span class="flower f6">🌺</span>
+
+    <div class="home-card">
+        <div style="font-size:30px">✿ ❀ ✿</div>
+        <h1>My Job</h1>
+        <p class="subtitle">
+            A little letter, a little English,<br>
+            and a fun quiz!
+        </p>
+
+        <div class="envelope" aria-label="Green envelope"></div>
+
+        <p class="subtitle">Open the letter to begin.</p>
+        <button onclick="showScreen('letter')">
+            Open the letter ✿
+        </button>
+        <div style="margin-top:18px;font-size:23px">
+            🌼 🌿 🌸 🌿 🌼
+        </div>
+    </div>
+</section>
+
+<!-- LETTER -->
+<section id="letter" class="screen letter-screen">
+    <span class="flower f1">🌼</span>
+    <span class="flower f2">🌿</span>
+    <span class="flower f3">🌸</span>
+    <span class="flower f4">🍃</span>
+
+    <article class="letter-paper">
+        <div class="decorative-title">✿ A LETTER FOR DANIEL ✿</div>
+        <h1>My Job</h1>
+
+        <div class="letter-heading">
+            <p><strong>To:</strong> Daniel</p>
+            <p><strong>Subject:</strong> My Job</p>
+        </div>
+
+        <p>Dear Daniel,</p>
+
+        <p>
+            Thanks for your email. It was nice to hear about your work.
+        </p>
+
+        <p>
+            I have a part-time job. I work at a library. I work from
+            9 a.m. to 3 p.m. four days a week. I enjoy my job because
+            I like reading and helping people. I organize books and
+            help visitors find information. During my breaks, I read
+            magazines and talk with my coworkers. It's a great place
+            to work.
+        </p>
+
+        <p>
+            Please write back and tell me about your job.
+        </p>
+
+        <p>Love,<br>Sophia</p>
+
+        <div style="text-align:center;font-size:25px;margin-top:15px">
+            🌷 ✿ 🌿 ✿ 🌷
+        </div>
+    </article>
+
+    <button onclick="startQuiz()">Next → Play the Quiz</button>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="screen">
+    <span class="flower f1">🌸</span>
+    <span class="flower f2">🌿</span>
+    <span class="flower f3">🌼</span>
+    <span class="flower f4">🌷</span>
+
+    <div class="quiz-card">
+        <h1>✿ Letter Quiz ✿</h1>
+
+        <div id="quizContent">
+            <div class="progress" id="progress"></div>
+            <div class="question" id="question"></div>
+            <div class="answers" id="answers"></div>
+            <div class="feedback" id="feedback" aria-live="polite"></div>
+
+            <div class="quiz-actions">
+                <button id="nextButton" onclick="nextQuestion()" hidden>
+                    Next question →
+                </button>
+            </div>
+        </div>
+
+        <div id="result" class="result" hidden></div>
+
+        <div class="quiz-actions">
+            <button onclick="showScreen('letter')">Read the letter again</button>
+            <button onclick="showScreen('home')">Home</button>
+        </div>
+    </div>
+</section>
+
+<script>
+const questions = [
+    {
+        q: "Who is the email addressed to?",
+        a: ["Sophia", "Daniel", "A coworker"],
+        correct: 1
+    },
+    {
+        q: "Where does Sophia work?",
+        a: ["At a school", "At a restaurant", "At a library"],
+        correct: 2
+    },
+    {
+        q: "What time does Sophia start work?",
+        a: ["9 a.m.", "3 p.m.", "8 p.m."],
+        correct: 0
+    },
+    {
+        q: "What time does Sophia finish work?",
+        a: ["9 a.m.", "3 p.m.", "5 p.m."],
+        correct: 1
+    },
+    {
+        q: "How many days a week does Sophia work?",
+        a: ["Two days", "Seven days", "Four days"],
+        correct: 2
+    },
+    {
+        q: "Why does Sophia enjoy her job?",
+        a: ["She likes reading and helping people",
+            "She likes cooking",
+            "She likes playing football"],
+        correct: 0
+    },
+    {
+        q: "What does Sophia organize?",
+        a: ["Magazines only", "Books", "Clothes"],
+        correct: 1
+    },
+    {
+        q: "What does Sophia do during her breaks?",
+        a: ["She goes swimming",
+            "She sleeps all day",
+            "She reads magazines and talks with coworkers"],
+        correct: 2
+    }
+];
+
+let current = 0;
+let score = 0;
+let answered = false;
+
+function showScreen(id) {
+    document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+    });
+
+    document.getElementById(id).classList.add("active");
+    window.scrollTo(0, 0);
+}
+
+function startQuiz() {
+    current = 0;
+    score = 0;
+    answered = false;
+
+    document.getElementById("quizContent").hidden = false;
+    document.getElementById("result").hidden = true;
+
+    showScreen("quiz");
+    renderQuestion();
+}
+
+function renderQuestion() {
+    answered = false;
+
+    const item = questions[current];
+
+    document.getElementById("progress").textContent =
+        `Question ${current + 1} of ${questions.length}`;
+
+    document.getElementById("question").textContent = item.q;
+    document.getElementById("feedback").textContent = "";
+    document.getElementById("nextButton").hidden = true;
+
+    const answersBox = document.getElementById("answers");
+    answersBox.innerHTML = "";
+
+    item.a.forEach((answer, index) => {
+        const button = document.createElement("button");
+        button.className = "answer";
+        button.textContent = answer;
+
+        button.onclick = () => checkAnswer(index, button);
+
+        answersBox.appendChild(button);
+    });
+}
+
+function checkAnswer(index, selectedButton) {
+    if (answered) return;
+
+    answered = true;
+
+    const item = questions[current];
+    const allButtons = document.querySelectorAll(".answer");
+
+    allButtons.forEach(button => button.disabled = true);
+
+    if (index === item.correct) {
+        score++;
+        selectedButton.classList.add("correct");
+        document.getElementById("feedback").textContent =
+            "Correct! Great job! 🌼";
+    } else {
+        selectedButton.classList.add("wrong");
+        allButtons[item.correct].classList.add("correct");
+        document.getElementById("feedback").textContent =
+            "Not quite! The green answer is correct. Keep learning! 🌿";
+    }
+
+    const nextButton = document.getElementById("nextButton");
+    nextButton.hidden = false;
+
+    nextButton.textContent =
+        current === questions.length - 1 ? "See my score →" : "Next question →";
+}
+
+function nextQuestion() {
+    if (!answered) return;
+
+    current++;
+
+    if (current < questions.length) {
+        renderQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function showResult() {
+    document.getElementById("quizContent").hidden = true;
+
+    const result = document.getElementById("result");
+    result.hidden = false;
+
+    let message;
+
+    if (score === 8) {
+        message = "Perfect score! Amazing work! 🌸";
+    } else if (score >= 6) {
+        message = "Great job! You understood the letter very well. 🌼";
+    } else if (score >= 4) {
+        message = "Good effort! Read the letter and try again. 🌿";
+    } else {
+        message = "Keep practicing! You can do it! 🌷";
+    }
+
+    result.innerHTML = `
+        <h2>Quiz completed! ✿</h2>
+        <p>Your score: <strong>${score} / ${questions.length}</strong></p>
+        <p>${message}</p>
+        <button onclick="startQuiz()">Try again ↻</button>
+    `;
+}
+</script>
+
+</body>
+</html>
+
